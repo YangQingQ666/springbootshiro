@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.mpy.shiro.dao.UserDao">
+
+    <resultMap type="cn.mpy.shiro.entity.UserBean" id="UserMap">
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="salt" column="salt" jdbcType="VARCHAR"/>
+        <collection property="roles" column="rolename" ofType="java.lang.String">
+            <result column="rolename" jdbcType="VARCHAR"/>
+        </collection>
+        <collection property="permissions" column="pname" ofType="java.lang.String">
+            <result column="pname" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <select id="findUser" resultType="cn.mpy.shiro.entity.UserBean">
+        select userid,username,`password`,usersex,usertel,salt from `user` WHERE username = #{username}
+    </select>
+    <select id="findUserWhere" resultMap="UserMap">
+        select u.username,u.password,r.rolename ,p.pname,u.salt from `user` u
+        inner join userrole u2 on u.userid =u2.userid
+        inner join `role` r on u2.roleid =r.roleid
+        inner join rolemenu r2 on r.roleid =r2.roleid
+        inner join permission p on r2.pid =p.pid where u.username=#{username}
+    </select>
+
+</mapper>
+
